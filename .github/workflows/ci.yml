@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1   # ⏱️ Hard limit for CTF pressure
+
+    steps:
+      - name: Checkout PR code (vulnerable)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Run build script
+        env:
+          FLAG_SECRET: ${{ secrets.FLAG_SECRET }}
+        run: |
+          bash test.sh
